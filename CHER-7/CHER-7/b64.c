@@ -26,7 +26,7 @@ unsigned char *__base64_encode(const unsigned char *str, int length, int *ret_le
 		length -= 3; /* we just handle 3 octets of data */
 	}
 
-	/* now deal with the tail end of things */
+	/* 24bit가 딱 떨어지지 않는 경우 패딩처리 */
 	if (length != 0) {
 		result[i++] = __base64_table[current[0] >> 2];
 		if (length > 1) {
@@ -34,7 +34,7 @@ unsigned char *__base64_encode(const unsigned char *str, int length, int *ret_le
 			result[i++] = __base64_table[(current[1] & 0x0f) << 2];
 			result[i++] = __base64_pad;
 		}
-		else {
+		else { /* 1byte가 더있는 경우 */
 			result[i++] = __base64_table[(current[0] & 0x03) << 4];
 			result[i++] = __base64_pad;
 			result[i++] = __base64_pad;

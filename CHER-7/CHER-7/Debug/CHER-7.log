@@ -1,11 +1,10 @@
-﻿빌드 시작: 2018-04-19 오후 3:06:09
+﻿빌드 시작: 2018-04-19 오후 5:59:21
      1>2 노드의 "C:\Users\hayeong\documents\visual studio 2010\Projects\CHER-7\CHER-7\CHER-7.vcxproj" 프로젝트(build 대상)입니다.
      1>InitializeBuildStatus:
          "AlwaysCreate"이(가) 지정되었기 때문에 "Debug\CHER-7.unsuccessfulbuild"을(를) 만들고 있습니다.
        ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt main.c
          main.c
-     1>c:\users\hayeong\documents\visual studio 2010\projects\cher-7\cher-7\main.c(25): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
        ManifestResourceCompile:
          모든 출력이 최신 상태입니다.
        Link:
@@ -26,4 +25,4 @@
 
 빌드했습니다.
 
-경과 시간: 00:00:00.40
+경과 시간: 00:00:00.42
