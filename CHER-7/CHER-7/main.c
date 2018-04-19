@@ -32,7 +32,7 @@ int main(){
 	
 	/* HelloWorld 출력 */
 	printf("HelloWorld\n");
-	printf("------------------------------------------------------------------------------------\n");
+	printf("\n----------------------------------암호화--------------------------------------------------\n\n");
 	
 	printf("SEED 암호화할 데이터를 입력하세요: ");
 	scanf("%128s", plaintext); /* 암호화할 평문 사용자입력 */
@@ -40,37 +40,32 @@ int main(){
 	
 	/* SEED-CBC 암호화 */
 	cipherlen = KISA_SEED_CBC_ENCRYPT(key, iv, plaintext, plaintext_length, ciphertext);
-	printf("암호화 시작\n");
 
 	/* 암호화한 데이터를 Base64 인코딩 */
 	str = __base64_encode((unsigned char *)plaintext, plaintext_length, &size);
 	printf("인코딩한 데이터: %s\n인코딩 후 데이터 길이: %d\n", str, size);
 
-	printf("평문: ");
-	for (i = 0; i < plaintext_length; i++)
-		printf("%02X ", plaintext[i]);
+	printf("평문: %s", plaintext);
+	/*for (i = 0; i < plaintext_length; i++)
+		printf("%02X ", plaintext[i]);*/
 
 	printf("\n암호문: %s", ciphertext);
-	/*for (i = 0; i < cipherlen; i++)
-		printf("%02X ", ciphertext[i]);*/
-	printf("\n------------------------------------------------------------------------------------\n");
-
+	printf("\n\n---------------------------------복호화---------------------------------------------------\n\n");
+	/* 암호화한 데이터를 Base64 디코딩 */
 	dst = __base64_decode(str, strlen(str), &size);
 	printf("디코딩한 데이터: %s\n디코딩 후 데이터 길이: %d\n", dst, size);
-	
-	free(str);
-	free(dst);
 
 	/* SEED-CBC 복호화 */
 	plainlen = KISA_SEED_CBC_DECRYPT(key, iv, dst, cipherlen, plaintext2);
 
-	printf("복호화 시작\n");
-	printf("암호문: ");
-	for (i = 0; i < cipherlen; i++)
-		printf("%02X ", ciphertext[i]);
+	printf("암호문: %s", ciphertext);
+	/*for (i = 0; i < cipherlen; i++)
+		printf("%02X ", ciphertext[i]);*/
 
-	printf("\n평문: ");
-	for (i = 0; i < plainlen; i++)
-		printf("%02X ", plaintext2[i]);
-	printf("\n------------------------------------------------------------------------------------\n");
+	printf("\n평문: %s", plaintext);
+	/*for (i = 0; i < plainlen; i++)
+		printf("%02X ", plaintext2[i]);*/
+	
+	free(str);
+	free(dst);
 }
