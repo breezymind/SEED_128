@@ -1,6 +1,4 @@
-#CHER-7 아래 Debug 파일 무시
-./CHER-7/Debug/
-
+Debug
 *.user
 *.filters
 *.vs
