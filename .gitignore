@@ -1,5 +1,5 @@
-Debug
+Debug/
 *.user
 *.filters
 *.vs
-VSMacro80
+VSMacro80/
