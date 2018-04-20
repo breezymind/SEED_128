@@ -21,11 +21,11 @@ int main(){
 	unsigned char iv[16] = { 0x93, 0xEB, 0x14, 0x9F, 0x92, 0xC9, 0x90, 0x5B, 0xAE, 0x5C, 0xD3, 0x4D, 0xA0, 0x6C, 0x3C, 0x8E };
 	
 	/* 입출력 버퍼 */
-	unsigned char plaintext[128] = "\0";
-	unsigned char ciphertext[144] = "\0";
+	unsigned char plaintext[1024] = "\0";
+	unsigned char ciphertext[1040] = "\0";
 
 	/* 복호화에 사용될 평문출력버퍼 */
-	unsigned char after_decrypt_plaintext[144] = "\0";
+	unsigned char after_decrypt_plaintext[1040] = "\0";
 
 	int plainlen = 0; /* 암호화 후 암호문 길이 */
 	int cipherlen = 0; /* 복호화 후 평문 길이 */
@@ -55,7 +55,7 @@ int main(){
 
 	printf("\n평문: ");
 	for (i = 0; i < plaintext_length; i++)
-		printf("%c ", plaintext[i]);
+		printf("%c", plaintext[i]);
 
 	printf("\n암호문: %s\n", ciphertext);
 
@@ -70,12 +70,12 @@ int main(){
 	plainlen = KISA_SEED_CBC_DECRYPT(key, iv, dst, size, after_decrypt_plaintext);
 	
 	printf("\n복호화 되기 전의 암호문: %s\n", ciphertext);
-	for (i = 0; i < cipherlen; i++)
-		printf("%02X ", ciphertext[i]);
+	/*for (i = 0; i < cipherlen; i++)
+		printf("%02X ", ciphertext[i]);*/
 
 	printf("\n복호화된 평문: ");
 	for (i = 0; i < plainlen; i++)
-		printf("%c ", after_decrypt_plaintext[i]);
+		printf("%c", after_decrypt_plaintext[i]);
 	printf("\n");
 
 	free(str);
