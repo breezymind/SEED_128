@@ -6,11 +6,11 @@
 #include "b64.h"
 #include "seedcbc.h"
 
+/* 
+* CHER-3
+* HelloWorld 출력
+*/
 void hello_world_print(){
-	/* 
-	* CHER-3
-	* HelloWorld 출력
-	*/
 	printf("HelloWorld\n");
 }
 
@@ -21,11 +21,11 @@ int main(){
 	unsigned char iv[16] = { 0x93, 0xEB, 0x14, 0x9F, 0x92, 0xC9, 0x90, 0x5B, 0xAE, 0x5C, 0xD3, 0x4D, 0xA0, 0x6C, 0x3C, 0x8E };
 	
 	/* 입출력 버퍼 */
-	unsigned char plaintext[1024] = "\0";
-	unsigned char ciphertext[1040] = "\0";
+	unsigned char plaintext[10240] = "\0";
+	unsigned char ciphertext[10256] = "\0";
 
 	/* 복호화에 사용될 평문출력버퍼 */
-	unsigned char after_decrypt_plaintext[1040] = "\0";
+	unsigned char after_decrypt_plaintext[10256] = "\0";
 
 	int plainlen = 0; /* 암호화 후 암호문 길이 */
 	int cipherlen = 0; /* 복호화 후 평문 길이 */
