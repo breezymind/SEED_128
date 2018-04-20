@@ -1,5 +1,7 @@
-./*/Debug/
+#CHER-7 아래 Debug 파일 무시
+./CHER-7/Debug/
+
 *.user
 *.filters
 *.vs
-./VSMacro80
+VSMacro80
