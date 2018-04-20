@@ -72,12 +72,12 @@ int main(){
 	printf("\n복호화 되기 전의 암호문: %s\n", ciphertext);
 	/*for (i = 0; i < cipherlen; i++)
 		printf("%02X ", ciphertext[i]);*/
-
+	
 	printf("\n복호화된 평문: ");
 	for (i = 0; i < plainlen; i++)
 		printf("%c", after_decrypt_plaintext[i]);
 	printf("\n");
-
+	
 	free(str);
 	free(dst);
 }
