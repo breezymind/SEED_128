@@ -33,7 +33,7 @@ int main(){
 	int plaintext_length = 0; /* plaintext의 길이 */
 	
 	/*
-	* str : base64 인코딩 후의 데이터,   
+	* str : base64 인코딩 후의 데이터
 	* dst : base64 디코딩 후의 데이터
 	*/
 	unsigned char *str, *dst;
@@ -56,26 +56,29 @@ int main(){
 	printf("\n평문: ");
 	for (i = 0; i < plaintext_length; i++)
 		printf("%c", plaintext[i]);
+	printf("\n암호화 전 데이터 길이: %d\n", plaintext_length);
+	
+	printf("\n암호문(binary): %s\n", ciphertext);
+	printf("\n암호문(16진수): ");
+	for (i = 0; i < cipherlen; i++)
+		printf("%02X ", ciphertext[i]);
 
-	printf("\n암호문: %s\n", ciphertext);
+	printf("\n\n암호화 후 데이터 길이: %d\n", cipherlen);
 
-	printf("\n인코딩한 데이터: %s\n\n인코딩 후 데이터 길이: %d\n", str, size);
+	printf("\n인코딩 후 데이터: %s\n\n인코딩 후 데이터 길이: %d\n", str, size);
 
 	printf("\n\n---------------------------------복호화---------------------------------------------------\n\n");
 	/* 암호화한 데이터를 Base64 디코딩 */
 	dst = __base64_decode(str, strlen(str), &size);
-	printf("\n디코딩한 데이터: %s\n\n디코딩 후 데이터 길이: %d\n", dst, size);
+	printf("\n디코딩 후 데이터: %s\n\n디코딩 후 데이터 길이: %d\n", dst, size);
 
 	/* SEED-CBC 복호화 */
 	plainlen = KISA_SEED_CBC_DECRYPT(key, iv, dst, size, after_decrypt_plaintext);
 	
-	printf("\n복호화 되기 전의 암호문: %s\n", ciphertext);
-	/*for (i = 0; i < cipherlen; i++)
-		printf("%02X ", ciphertext[i]);*/
-	
 	printf("\n복호화된 평문: ");
 	for (i = 0; i < plainlen; i++)
 		printf("%c", after_decrypt_plaintext[i]);
+	printf("\n복호화 후 데이터 길이: %d\n", plainlen);
 	printf("\n");
 	
 	free(str);
