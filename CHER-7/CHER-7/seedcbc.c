@@ -599,7 +599,7 @@ int KISA_SEED_CBC_ENCRYPT(unsigned char *user_key, unsigned char *iv, unsigned c
 {
 	int interlen = 0;
 	int padlen = 0;
-	KISA_SEED_CBC_INFO cbc;
+	KISA_SEED_CBC_INFO cbc; /* SEED CBC */
 	unsigned int *data;
 	unsigned char *cdata;
 	unsigned int *outbuf;

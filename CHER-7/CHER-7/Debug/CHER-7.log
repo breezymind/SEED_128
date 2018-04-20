@@ -1,7 +1,7 @@
-﻿빌드 시작: 2018-04-19 오후 6:10:37
+﻿빌드 시작: 2018-04-20 오전 11:16:09
      1>2 노드의 "C:\Users\hayeong\documents\visual studio 2010\Projects\CHER-7\CHER-7\CHER-7.vcxproj" 프로젝트(build 대상)입니다.
      1>InitializeBuildStatus:
-         "Debug\CHER-7.unsuccessfulbuild"에 연결(touching)하고 있습니다.
+         "AlwaysCreate"이(가) 지정되었기 때문에 "Debug\CHER-7.unsuccessfulbuild"을(를) 만들고 있습니다.
        ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt main.c
          main.c
@@ -25,4 +25,4 @@
 
 빌드했습니다.
 
-경과 시간: 00:00:00.43
+경과 시간: 00:00:00.91
