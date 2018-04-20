@@ -1,4 +1,4 @@
-Debug/
-*.user
-*.filters
-*.vs
+./*/Debug/
+./*/*.user
+./*/*.filters
+./*/*.vs
