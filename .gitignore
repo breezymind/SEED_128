@@ -1,4 +1,5 @@
-Debug
+./CHER-7/Debug
+./scanf_test/Debug
 *.user
 *.filters
 *.vs
