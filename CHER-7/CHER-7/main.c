@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <WinSock2.h>
+#include <Winsock2.h>
 
 #include "b64.h"
 #include "seedcbc.h"
@@ -25,6 +25,8 @@ int main(){
 	unsigned char ciphertext[BUF_SIZE+16] = "\0";
 	/* 복호화에 사용될 평문출력버퍼 */
 	//unsigned char after_decrypt_plaintext[BUF_SIZE] = "\0";
+	/*unsigned char server_text[BUF_SIZE] = "\0";
+	int server_text_length = 0;*/
 
 	int plainlen = 0; /* 복호화 후 데이터 길이 */
 	int cipherlen = 0; /* 암호화 후 데이터 길이 */
@@ -36,17 +38,10 @@ int main(){
 	*/
 	unsigned char *str;
 	int  size = 0;
-	int i=0;
 	WSADATA wsaData;
 	SOCKET connect_sock;
 	SOCKADDR_IN connect_addr;
 	
-	/* 프로그램 시작 전 인자들이 잘 들어왔는지 확인 */
-	/*if(argc != 3){
- 		printf("Usage:%s <IP> <port>\n", argv[0]);
-		exit(1);
-	}*/
-	memset(&wsaData, 0, sizeof(wsaData));
 	/*
 	* 소켓 라이브러리 초기화
 	* 2.2버전의 winsock사용
@@ -54,20 +49,26 @@ int main(){
 	if(WSAStartup(MAKEWORD(2, 2), &wsaData) != 0){
 		error_handling("WSAStartup() Error");
 	}
+	printf("socket 라이브러리 초기화\n");
 	/* 소켓을 생성해 SOCKET 구조체에 대입*/
 	connect_sock = socket(PF_INET, SOCK_STREAM, 0);
 	if(connect_sock == INVALID_SOCKET){
 		error_handling("socket() Error");
 	}
+	printf("socket 생성\n");
 	memset(&connect_addr, 0, sizeof(connect_addr));
 	connect_addr.sin_family = AF_INET; /* Internet Protocol Version(IPv4) */
 	connect_addr.sin_addr.s_addr = inet_addr("172.16.10.141"); /* IP주소 저장 */
-	connect_addr.sin_port = htons(5001); /* port번호 저장 */
-
+	connect_addr.sin_port = htons(5005); /* port번호 저장 */
+	
+	printf("연결중...\n");
 	/* 구조체에 저장된 주소로 connect_sock 소켓을 통해 접속 시도 */
 	if(connect(connect_sock, (SOCKADDR*)&connect_addr, sizeof(connect_addr)) == SOCKET_ERROR){
+		printf("Err_No: %d\n", WSAGetLastError());
 		error_handling("connect() Error");
 	}
+	
+	printf("연결성공\n");
 	printf("\n----------------------------------암호화--------------------------------------------------\n\n");
 	
 	printf("SEED 암호화할 데이터를 입력하세요: ");
@@ -78,9 +79,11 @@ int main(){
 	cipherlen = KISA_SEED_CBC_ENCRYPT(key, iv, plaintext, plaintext_length, ciphertext);
 	/* 암호화한 데이터를 Base64 인코딩 */
 	str = __base64_encode((unsigned char *)ciphertext, cipherlen, &size);
-
+	/* 서버로 암호화한 데이터 전송 */
 	send(connect_sock, (const char *)str, sizeof(str), 0);
 	puts("전송성공");
+	//server_text_length = recv(connect_sock, (char *)server_text, sizeof(server_text)-1, 0);
+
 	closesocket(connect_sock); /* 소켓 라이브러리 해제 */
 	WSACleanup();
 
