@@ -25,8 +25,8 @@ int main(){
 	unsigned char ciphertext[BUF_SIZE+16] = "\0";
 	/* 복호화에 사용될 평문출력버퍼 */
 	//unsigned char after_decrypt_plaintext[BUF_SIZE] = "\0";
-	/*unsigned char server_text[BUF_SIZE] = "\0";
-	int server_text_length = 0;*/
+	unsigned char server_text[BUF_SIZE] = "\0";
+	int server_text_length = 0;
 
 	int plainlen = 0; /* 복호화 후 데이터 길이 */
 	int cipherlen = 0; /* 암호화 후 데이터 길이 */
@@ -69,8 +69,8 @@ int main(){
 	}
 	
 	printf("연결성공\n");
-	printf("\n----------------------------------암호화--------------------------------------------------\n\n");
-	
+
+	/* 암호화 시작 */
 	printf("SEED 암호화할 데이터를 입력하세요: ");
 	fgets((char *)plaintext, sizeof(plaintext), stdin); /* 암호화할 평문 사용자입력 */
 	plaintext_length = strlen((char *)plaintext); /* 입력받은 평문의 길이 계산 */
@@ -80,17 +80,21 @@ int main(){
 	/* 암호화한 데이터를 Base64 인코딩 */
 	str = __base64_encode((unsigned char *)ciphertext, cipherlen, &size);
 	/* 서버로 암호화한 데이터 전송 */
-	send(connect_sock, (const char *)str, sizeof(str), 0);
-	puts("전송성공");
-	//server_text_length = recv(connect_sock, (char *)server_text, sizeof(server_text)-1, 0);
-
+	send(connect_sock, (const char *)str, size, 0);
+	//printf("%s", strlen((char *)str));
+	printf("전송성공\n");
+	/* 서버로부터 전송되는 데이터 수신 */
+	server_text_length = recv(connect_sock, (char *)server_text, sizeof(server_text) - 1, 0);
+	if(server_text_length == -1){
+		error_handling("read() error");
+	}
+	printf("서버로부터 받은 데이터: %s", server_text);
+	printf("연결종료\n");
 	closesocket(connect_sock); /* 소켓 라이브러리 해제 */
 	WSACleanup();
-
-	hello_world_print();
 	
 	/* 암호화 데이터 출력 */
-	print_encryptdata(plaintext_length, cipherlen, plaintext, ciphertext, str, size);
+	//print_encryptdata(plaintext_length, cipherlen, plaintext, ciphertext, str, size);
 	
 	//printf("\n\n---------------------------------복호화---------------------------------------------------\n\n");
 	///* 암호화한 데이터를 Base64 디코딩 */
@@ -102,6 +106,7 @@ int main(){
 
 	free(str);
 	/*free(dst);*/
+	hello_world_print();
 }
 
 /* 
