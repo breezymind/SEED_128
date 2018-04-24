@@ -103,10 +103,10 @@ int main(){
 			error_handling("read() error");
 		}
 		printf("서버로부터 받은 데이터: %s", server_text);
-		printf("--------------------------------------------------------------\n");
 		
 		/* 암호화 데이터 출력 */
-		//print_encryptdata(plaintext_length, cipherlen, plaintext, ciphertext, str, size);
+		print_encryptdata(plaintext_length, cipherlen, plaintext, ciphertext, str, size);
+		printf("--------------------------------------------------------------\n");
 	
 		//printf("\n\n---------------------------------복호화---------------------------------------------------\n\n");
 		///* 암호화한 데이터를 Base64 디코딩 */
@@ -115,12 +115,12 @@ int main(){
 		//plainlen = KISA_SEED_CBC_DECRYPT(key, iv, dst, size, after_decrypt_plaintext);
 		///* 복호화 데이터 출력 */
 		//print_decryptdata(plainlen, after_decrypt_plaintext, dst, size);
-		free(str);
+		//free(str);
 	}
 	printf("연결종료\n");
 	closesocket(connect_sock); /* 소켓 닫기 */
 	WSACleanup();/* winsock 해제 */
-	/*free(dst);*/
+	//free(dst);
 	hello_world_print();
 	return 0;
 }
@@ -141,7 +141,7 @@ int print_encryptdata(int plaintext_length, int cipherlen, unsigned char plainte
 		printf("%c", plaintext[i]);
 	printf("\n암호화 전 데이터 길이: %d\n", plaintext_length);
 	
-	printf("\n암호문(binary): %s\n", ciphertext);
+	printf("\n암호문: %s\n", ciphertext);
 	printf("\n암호문(16진수): ");
 	for (i = 0; i < cipherlen; i++)
 		printf("%02X ", ciphertext[i]);
