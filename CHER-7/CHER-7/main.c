@@ -8,6 +8,8 @@
 #include "seedcbc.h"
 
 #define BUF_SIZE 10240
+#define SERVER_IP "172.16.10.141"
+#define PORT_NUM 5005
 
 void hello_world_print();
 int print_encryptdata(int plaintext_length, int cipherlen, unsigned char plaintext[], unsigned char ciphertext[], unsigned char *str, int size);
@@ -58,8 +60,8 @@ int main(){
 	printf("socket 생성\n");
 	memset(&connect_addr, 0, sizeof(connect_addr));
 	connect_addr.sin_family = AF_INET; /* Internet Protocol Version(IPv4) */
-	connect_addr.sin_addr.s_addr = inet_addr("172.16.10.141"); /* IP주소 저장 */
-	connect_addr.sin_port = htons(5005); /* port번호 저장 */
+	connect_addr.sin_addr.s_addr = inet_addr(SERVER_IP); /* IP주소 저장 */
+	connect_addr.sin_port = htons(PORT_NUM); /* port번호 저장 */
 	
 	printf("연결중...\n");
 	/* 구조체에 저장된 주소로 connect_sock 소켓을 통해 접속 시도 */
@@ -67,46 +69,52 @@ int main(){
 		printf("Err_No: %d\n", WSAGetLastError());
 		error_handling("connect() Error");
 	}
-	
 	printf("연결성공\n");
 
-	/* 암호화 시작 */
-	printf("SEED 암호화할 데이터를 입력하세요: ");
-	fgets((char *)plaintext, sizeof(plaintext), stdin); /* 암호화할 평문 사용자입력 */
-	plaintext_length = strlen((char *)plaintext); /* 입력받은 평문의 길이 계산 */
-	
-	/* SEED-CBC 암호화 */
-	cipherlen = KISA_SEED_CBC_ENCRYPT(key, iv, plaintext, plaintext_length, ciphertext);
-	/* 암호화한 데이터를 Base64 인코딩 */
-	str = __base64_encode((unsigned char *)ciphertext, cipherlen, &size);
-	/* 서버로 암호화한 데이터 전송 */
-	send(connect_sock, (const char *)str, size, 0);
-	//printf("%s", strlen((char *)str));
-	printf("전송성공\n");
-	/* 서버로부터 전송되는 데이터 수신 */
-	server_text_length = recv(connect_sock, (char *)server_text, sizeof(server_text) - 1, 0);
-	if(server_text_length == -1){
-		error_handling("read() error");
-	}
-	printf("서버로부터 받은 데이터: %s", server_text);
-	printf("연결종료\n");
-	closesocket(connect_sock); /* 소켓 라이브러리 해제 */
-	WSACleanup();
-	
-	/* 암호화 데이터 출력 */
-	//print_encryptdata(plaintext_length, cipherlen, plaintext, ciphertext, str, size);
-	
-	//printf("\n\n---------------------------------복호화---------------------------------------------------\n\n");
-	///* 암호화한 데이터를 Base64 디코딩 */
-	//dst = __base64_decode(str, strlen(str), &size);
-	///* SEED-CBC 복호화 */
-	//plainlen = KISA_SEED_CBC_DECRYPT(key, iv, dst, size, after_decrypt_plaintext);
-	///* 복호화 데이터 출력 */
-	//print_decryptdata(plainlen, after_decrypt_plaintext, dst, size);
+	while(1){
+		memset(&server_text, 0, sizeof(server_text));
+		/* 암호화 시작 */
+		printf("SEED 암호화할 데이터를 입력하세요: ");
+		fgets((char *)plaintext, sizeof(plaintext), stdin); /* 암호화할 평문 사용자입력 */
+		plaintext_length = strlen((char *)plaintext); /* 입력받은 평문의 길이 계산 */
+		/* exit를 입력하면 종료 */
+		if(strcmp((char *)plaintext, "exit") == 0) break;
 
-	free(str);
+		/* SEED-CBC 암호화 */
+		cipherlen = KISA_SEED_CBC_ENCRYPT(key, iv, plaintext, plaintext_length, ciphertext);
+		/* 암호화한 데이터를 Base64 인코딩 */
+		str = __base64_encode((unsigned char *)ciphertext, cipherlen, &size);
+		/* 서버로 암호화한 데이터 전송 */
+		send(connect_sock, (const char *)str, size, 0);
+		//printf("%s", strlen((char *)str));
+		printf("전송성공\n");
+
+		/* 서버로부터 전송되는 데이터 수신 */
+		server_text_length = recv(connect_sock, (char *)server_text, sizeof(server_text) - 1, 0);
+		if(server_text_length == -1){
+			error_handling("read() error");
+		}
+		printf("서버로부터 받은 데이터: %s", server_text);
+		
+	
+		/* 암호화 데이터 출력 */
+		//print_encryptdata(plaintext_length, cipherlen, plaintext, ciphertext, str, size);
+	
+		//printf("\n\n---------------------------------복호화---------------------------------------------------\n\n");
+		///* 암호화한 데이터를 Base64 디코딩 */
+		//dst = __base64_decode(str, strlen(str), &size);
+		///* SEED-CBC 복호화 */
+		//plainlen = KISA_SEED_CBC_DECRYPT(key, iv, dst, size, after_decrypt_plaintext);
+		///* 복호화 데이터 출력 */
+		//print_decryptdata(plainlen, after_decrypt_plaintext, dst, size);
+		free(str);
+	}
+	printf("연결종료\n");
+	closesocket(connect_sock); /* 소켓 닫기 */
+	WSACleanup();/* winsock 해제 */
 	/*free(dst);*/
 	hello_world_print();
+	return 0;
 }
 
 /* 
