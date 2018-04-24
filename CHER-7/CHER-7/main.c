@@ -40,10 +40,11 @@ int main(){
 	*/
 	unsigned char *str;
 	int  size = 0;
+	char  exit_str[7] = "\0";
 	WSADATA wsaData;
 	SOCKET connect_sock;
 	SOCKADDR_IN connect_addr;
-	
+
 	/*
 	* 소켓 라이브러리 초기화
 	* 2.2버전의 winsock사용
@@ -72,21 +73,28 @@ int main(){
 	printf("연결성공\n");
 
 	while(1){
+		memset(&exit_str, 0, sizeof(exit_str));
 		memset(&server_text, 0, sizeof(server_text));
 		/* 암호화 시작 */
 		printf("SEED 암호화할 데이터를 입력하세요: ");
 		fgets((char *)plaintext, sizeof(plaintext), stdin); /* 암호화할 평문 사용자입력 */
-		plaintext_length = strlen((char *)plaintext); /* 입력받은 평문의 길이 계산 */
-		/* exit를 입력하면 종료 */
-		if(strcmp((char *)plaintext, "exit") == 0) break;
+		plaintext_length = strlen((char *)plaintext); /* 입력받은+ 평문의 길이 계산 */
 
+		if(plaintext_length == 5){
+			strncpy(exit_str, (char *)plaintext, 4);
+			exit_str[5] = '\0';
+		}
+		/* 입력받은 데이터가 exit면 종료 */
+		if(strcmp(exit_str, "exit") == 0){
+			send(connect_sock, exit_str, strlen(exit_str), 0);
+			break;
+		}
 		/* SEED-CBC 암호화 */
 		cipherlen = KISA_SEED_CBC_ENCRYPT(key, iv, plaintext, plaintext_length, ciphertext);
 		/* 암호화한 데이터를 Base64 인코딩 */
 		str = __base64_encode((unsigned char *)ciphertext, cipherlen, &size);
 		/* 서버로 암호화한 데이터 전송 */
 		send(connect_sock, (const char *)str, size, 0);
-		//printf("%s", strlen((char *)str));
 		printf("전송성공\n");
 
 		/* 서버로부터 전송되는 데이터 수신 */
@@ -95,8 +103,8 @@ int main(){
 			error_handling("read() error");
 		}
 		printf("서버로부터 받은 데이터: %s", server_text);
+		printf("--------------------------------------------------------------\n");
 		
-	
 		/* 암호화 데이터 출력 */
 		//print_encryptdata(plaintext_length, cipherlen, plaintext, ciphertext, str, size);
 	
