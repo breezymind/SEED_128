@@ -13,6 +13,7 @@
 
 void hello_world_print();
 int print_encryptdata(int plaintext_length, int cipherlen, unsigned char plaintext[], unsigned char ciphertext[], unsigned char *str, int size);
+int print_decryptdata(int plainlen, unsigned char after_decrypt_plaintext[], unsigned char *dst, int size);
 void error_handling(char *msg);
 
 int main(){
@@ -24,6 +25,8 @@ int main(){
 	/* 입출력 버퍼 */
 	unsigned char plaintext[BUF_SIZE] = "\0";
 	unsigned char ciphertext[BUF_SIZE+16] = "\0";
+
+	unsigned char after_decrypt_plaintext[BUF_SIZE] = "\0"; /* 복호화에 사용될 평문출력버퍼 */
 	unsigned char server_text[BUF_SIZE] = "\0";
 	int server_text_length = 0;
 
@@ -35,7 +38,8 @@ int main(){
 	* str : base64 인코딩 후의 데이터
 	* dst : base64 디코딩 후의 데이터
 	*/
-	unsigned char *str;
+	unsigned char *str = '\0';
+	unsigned char *dst = '\0';
 	int  size = 0;
 	char  exit_str[7] = "\0";
 	WSADATA wsaData;
@@ -75,7 +79,7 @@ int main(){
 		/* 암호화 시작 */
 		printf("SEED 암호화할 데이터를 입력하세요: ");
 		fgets((char *)plaintext, sizeof(plaintext), stdin); /* 암호화할 평문 사용자입력 */
-		plaintext_length = strlen((char *)plaintext); /* 입력받은+ 평문의 길이 계산 */
+		plaintext_length = strlen((char *)plaintext); /* 입력받은 평문의 길이 계산 */
 
 		if(plaintext_length == 5){
 			strncpy(exit_str, (char *)plaintext, 4);
@@ -92,7 +96,7 @@ int main(){
 		str = __base64_encode((unsigned char *)ciphertext, cipherlen, &size);
 		/* 서버로 암호화한 데이터 전송 */
 		send(connect_sock, (const char *)str, size, 0);
-		printf("전송성공\n");
+		printf("암호화 데이터 전송성공\n");
 
 		/* 서버로부터 전송되는 데이터 수신 */
 		server_text_length = recv(connect_sock, (char *)server_text, sizeof(server_text) - 1, 0);
@@ -101,15 +105,22 @@ int main(){
 		}
 		printf("서버로부터 받은 데이터: %s", server_text);
 		
-		/* 암호화 데이터 출력 */
-		print_encryptdata(plaintext_length, cipherlen, plaintext, ciphertext, str, size);
+		/* 서버로부터 받은 암호화 데이터를 Base64 디코딩 */
+		dst = __base64_decode(server_text, strlen((char *)server_text), &size);
+		/* SEED-CBC 복호화 */
+		plainlen = KISA_SEED_CBC_DECRYPT(key, iv, dst, size, after_decrypt_plaintext);
+		/* 복호화 데이터 출력 */
+		print_decryptdata(plainlen, after_decrypt_plaintext, dst, size);
+		free(str);
+		free(dst);
+		
 		printf("--------------------------------------------------------------\n");
 	}
 	printf("연결종료\n");
 	closesocket(connect_sock); /* 소켓 닫기 */
 	WSACleanup();/* winsock 해제 */
 	//hello_world_print();
-	return 0;
+	return ;
 }
 
 /* 
@@ -137,6 +148,20 @@ int print_encryptdata(int plaintext_length, int cipherlen, unsigned char plainte
 
 	printf("\n인코딩 후 데이터: %s\n\n인코딩 후 데이터 길이: %d\n", str, size);
 	
+	return 0;
+}
+
+int print_decryptdata(int plainlen, unsigned char after_decrypt_plaintext[], unsigned char *dst, int size){
+	int i = 0;
+
+	//printf("\n디코딩 후 데이터: %s\n\n디코딩 후 데이터 길이: %d\n", dst, size);
+
+	printf("\n데이터 복호화 결과: ");
+	for (i = 0; i < plainlen; i++)
+		printf("%c", after_decrypt_plaintext[i]);
+	//printf("\n복호화 후 데이터 길이: %d\n", plainlen);
+	printf("\n");
+
 	return 0;
 }
 
