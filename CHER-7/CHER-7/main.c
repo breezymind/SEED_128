@@ -27,7 +27,6 @@ int main(){
 	int plainlen = 0; /* 복호화 후 데이터 길이 */
 	int cipherlen = 0; /* 암호화 후 데이터 길이 */
 	int plaintext_length = 0; /* 입력받은 plaintext의 길이 */
-	int encode_len = 0;
 	
 	/*
 	* str : base64 인코딩 후의 데이터
@@ -47,19 +46,19 @@ int main(){
 	str = __base64_encode((unsigned char *)ciphertext, cipherlen, &size);
 	/* 암호화 데이터 출력 */
 	print_encryptdata(plaintext_length, cipherlen, plaintext, ciphertext, str, size);
-	encode
+	
 	printf("\n\n---------------------------------복호화---------------------------------------------------\n\n");
 	/* 암호화한 데이터를 Base64 디코딩 */
-	dst = __base64_decode(str, strlen(str), &size);
+	dst = __base64_decode(str, strlen((char *)str), &size);
 	/* SEED-CBC 복호화 */
 	plainlen = KISA_SEED_CBC_DECRYPT(key, iv, dst, size, after_decrypt_plaintext);
 	/* 복호화 데이터 출력 */
 	print_decryptdata(plainlen, after_decrypt_plaintext, dst, size);
 	free(str);
 	free(dst);
+
 	hello_world_print();
 	return 0;
-	
 }
 
 /* 
