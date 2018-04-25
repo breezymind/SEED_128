@@ -1,5 +1,12 @@
-Debug/
-*.user
 *.filters
 *.vs
 VSMacro80/
+*.user
+*.opensdf
+*.sdf
+*.suo
+Debug/
+Release/
+Release_koscom/
+Release_koscom_noSign/
+ipch/
