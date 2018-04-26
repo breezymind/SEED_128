@@ -8,7 +8,7 @@
 
 #define BUF_SIZE 10240
 
-void hello_world_print();
+void hello_world_print(); /* CHER-3 HelloWorld 출력 */
 int print_encryptdata(int plaintext_length, int cipherlen, unsigned char plaintext[], unsigned char ciphertext[], unsigned char *str, int size);
 int print_decryptdata(int plainlen, unsigned char after_decrypt_plaintext[], unsigned char *dst, int size);
 
@@ -27,19 +27,16 @@ int main(){
 	int plainlen = 0; /* 복호화 후 데이터 길이 */
 	int cipherlen = 0; /* 암호화 후 데이터 길이 */
 	int plaintext_length = 0; /* 입력받은 plaintext의 길이 */
-	
-	/*
-	* str : base64 인코딩 후의 데이터
-	* dst : base64 디코딩 후의 데이터
-	*/
-	unsigned char *str, *dst;
+	unsigned char *str = NULL; /* str : base64 인코딩 후의 데이터 */
+	unsigned char *dst = NULL; /* dst : base64 디코딩 후의 데이터 */
 	int  size = 0;
 	
 	printf("\n\n---------------------------------암호화---------------------------------------------------\n\n");
 	/* 암호화 시작 */
 	printf("SEED 암호화할 데이터를 입력하세요: ");
 	fgets((char *)plaintext, sizeof(plaintext), stdin); /* 암호화할 평문 사용자입력 */
-	plaintext_length = strlen((char *)plaintext); /* 입력받은+ 평문의 길이 계산 */
+	plaintext_length = strlen((char *)plaintext); /* 입력받은 평문의 길이 계산 */
+
 	/* SEED-CBC 암호화 */
 	cipherlen = KISA_SEED_CBC_ENCRYPT(key, iv, plaintext, plaintext_length, ciphertext);
 	/* 암호화한 데이터를 Base64 인코딩 */
@@ -54,6 +51,7 @@ int main(){
 	plainlen = KISA_SEED_CBC_DECRYPT(key, iv, dst, size, after_decrypt_plaintext);
 	/* 복호화 데이터 출력 */
 	print_decryptdata(plainlen, after_decrypt_plaintext, dst, size);
+	
 	free(str);
 	free(dst);
 
@@ -61,10 +59,6 @@ int main(){
 	return 0;
 }
 
-/* 
-* CHER-3
-* HelloWorld 출력
-*/
 void hello_world_print(){
 	printf("HelloWorld\n");
 }

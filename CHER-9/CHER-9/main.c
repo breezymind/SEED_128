@@ -11,8 +11,7 @@
 #define SERVER_IP "172.16.10.141"
 #define PORT_NUM 5005
 
-void hello_world_print();
-int print_encryptdata(int plaintext_length, int cipherlen, unsigned char plaintext[], unsigned char ciphertext[], unsigned char *str, int size);
+void hello_world_print(); /* CHER-3 HelloWorld 출력 */
 int print_decryptdata(int plainlen, unsigned char after_decrypt_plaintext[], unsigned char *dst, int size);
 void error_handling(char *msg);
 
@@ -33,15 +32,9 @@ int main(){
 	int plainlen = 0; /* 복호화 후 데이터 길이 */
 	int cipherlen = 0; /* 암호화 후 데이터 길이 */
 	int plaintext_length = 0; /* 입력받은 plaintext의 길이 */
-	
-	/*
-	* str : base64 인코딩 후의 데이터
-	* dst : base64 디코딩 후의 데이터
-	*/
-	unsigned char *str = '\0';
-	unsigned char *dst = '\0';
+	unsigned char *str = NULL; /* str : base64 인코딩 후의 데이터 */
+	unsigned char *dst = NULL; /* dst : base64 디코딩 후의 데이터 */
 	int  size = 0;
-	char  exit_str[7] = "\0";
 	WSADATA wsaData;
 	SOCKET connect_sock;
 	SOCKADDR_IN connect_addr;
@@ -54,12 +47,14 @@ int main(){
 		error_handling("WSAStartup() Error");
 	}
 	printf("socket 라이브러리 초기화\n");
+
 	/* 소켓을 생성해 SOCKET 구조체에 대입*/
 	connect_sock = socket(PF_INET, SOCK_STREAM, 0);
 	if(connect_sock == INVALID_SOCKET){
 		error_handling("socket() Error");
 	}
 	printf("socket 생성\n");
+
 	memset(&connect_addr, 0, sizeof(connect_addr));
 	connect_addr.sin_family = AF_INET; /* Internet Protocol Version(IPv4) */
 	connect_addr.sin_addr.s_addr = inet_addr(SERVER_IP); /* IP주소 저장 */
@@ -74,20 +69,15 @@ int main(){
 	printf("연결성공\n");
 
 	while(1){
-		memset(&exit_str, 0, sizeof(exit_str));
 		memset(&server_text, 0, sizeof(server_text));
 		/* 암호화 시작 */
 		printf("SEED 암호화할 데이터를 입력하세요: ");
 		fgets((char *)plaintext, sizeof(plaintext), stdin); /* 암호화할 평문 사용자입력 */
 		plaintext_length = strlen((char *)plaintext); /* 입력받은 평문의 길이 계산 */
-
-		if(plaintext_length == 5){
-			strncpy(exit_str, (char *)plaintext, 4);
-			exit_str[5] = '\0';
-		}
+		
 		/* 입력받은 데이터가 exit면 종료 */
-		if(strcmp(exit_str, "exit") == 0){
-			send(connect_sock, exit_str, strlen(exit_str), 0);
+		if(strcmp((char *)plaintext, "exit\n") == 0){
+			send(connect_sock, (char *)plaintext, strlen((char *)plaintext), 0);
 			break;
 		}
 		/* SEED-CBC 암호화 */
@@ -111,6 +101,7 @@ int main(){
 		plainlen = KISA_SEED_CBC_DECRYPT(key, iv, dst, size, after_decrypt_plaintext);
 		/* 복호화 데이터 출력 */
 		print_decryptdata(plainlen, after_decrypt_plaintext, dst, size);
+		
 		free(str);
 		free(dst);
 		
@@ -120,35 +111,11 @@ int main(){
 	closesocket(connect_sock); /* 소켓 닫기 */
 	WSACleanup();/* winsock 해제 */
 	//hello_world_print();
-	return ;
+	return 0;
 }
 
-/* 
-* CHER-3
-* HelloWorld 출력
-*/
 void hello_world_print(){
 	printf("HelloWorld\n");
-}
-
-int print_encryptdata(int plaintext_length, int cipherlen, unsigned char plaintext[], unsigned char ciphertext[], unsigned char *str, int size){
-	int i = 0;
-
-	printf("\n평문: ");
-	for (i = 0; i < plaintext_length; i++)
-		printf("%c", plaintext[i]);
-	printf("\n암호화 전 데이터 길이: %d\n", plaintext_length);
-	
-	printf("\n암호문: %s\n", ciphertext);
-	printf("\n암호문(16진수): ");
-	for (i = 0; i < cipherlen; i++)
-		printf("%02X ", ciphertext[i]);
-
-	printf("\n\n암호화 후 데이터 길이: %d\n", cipherlen);
-
-	printf("\n인코딩 후 데이터: %s\n\n인코딩 후 데이터 길이: %d\n", str, size);
-	
-	return 0;
 }
 
 int print_decryptdata(int plainlen, unsigned char after_decrypt_plaintext[], unsigned char *dst, int size){
