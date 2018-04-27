@@ -23,13 +23,15 @@ int main(){
 	unsigned char ciphertext[BUF_SIZE+16] = "\0";
 	/* 복호화에 사용될 평문출력버퍼 */
 	unsigned char after_decrypt_plaintext[BUF_SIZE] = "\0";
-
-	int after_decrypt_len = 0; /* 복호화 후 데이터 길이 */
-	int after_encrypt_len = 0; /* 암호화 후 데이터 길이 */
-	int plaintext_len = 0; /* 입력받은 plaintext의 길이 */
+	
 	unsigned char *str = NULL; /* str : base64 인코딩 후의 데이터 */
 	unsigned char *dst = NULL; /* dst : base64 디코딩 후의 데이터 */
+
 	int  size = 0;
+	int plaintext_len = 0; /* 입력받은 plaintext의 길이 */
+	int after_decrypt_len = 0; /* 복호화 후 데이터 길이 */
+	int after_encrypt_len = 0; /* 암호화 후 데이터 길이 */
+	
 	
 	printf("\n\n---------------------------------암호화---------------------------------------------------\n\n");
 	/* 암호화 시작 */
@@ -56,6 +58,7 @@ int main(){
 	free(dst);
 
 	hello_world_print();
+
 	return 0;
 }
 
